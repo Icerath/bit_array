@@ -11,6 +11,7 @@ fn test_get() {
         }
     }
 }
+#[allow(clippy::needless_range_loop)]
 #[test]
 #[cfg(feature = "std")]
 fn test_as_array() {
@@ -21,10 +22,10 @@ fn test_as_array() {
         assert_eq!(BitArray::from(bool_array), bit_array);
         let mut bytes = format!("{bit_array:?}").into_bytes();
         bytes.reverse();
-        for i in 0..64u8 {
-            let byte = (bytes[i as usize] - b'0') != 0;
+        for i in 0..64 {
+            let byte = (bytes[i] - b'0') != 0;
             assert_eq!(byte, bit_array.get_unchecked(i));
-            assert_eq!(byte, *bool_array.get(i as usize).unwrap());
+            assert_eq!(byte, *bool_array.get(i).unwrap());
         }
     }
 }

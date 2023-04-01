@@ -24,7 +24,7 @@ impl BitArray {
     /// Panics if index >= 64.
     #[inline]
     #[must_use]
-    pub const fn get(&self, index: u8) -> Option<bool> {
+    pub const fn get(&self, index: usize) -> Option<bool> {
         if index < 64 {
             Some(self.get_unchecked(index))
         } else {
@@ -79,7 +79,7 @@ impl BitArray {
     }
 
     #[inline]
-    pub const fn get_unchecked(&self, index: u8) -> bool {
+    pub const fn get_unchecked(&self, index: usize) -> bool {
         (((1u64 << index) & self.0) >> index) != 0
     }
 }
@@ -111,11 +111,14 @@ impl From<[bool; 64]> for BitArray {
     }
 }
 
+#[allow(clippy::needless_range_loop)]
 impl From<BitArray> for [bool; 64] {
+    #[must_use]
+    #[inline]
     fn from(val: BitArray) -> Self {
         let mut array = [false; 64];
-        for index in 0..64u8 {
-            array[index as usize] = val.get_unchecked(index);
+        for index in 0..64 {
+            array[index] = val.get_unchecked(index);
         }
         array
     }
@@ -127,17 +130,6 @@ impl fmt::Debug for BitArray {
     }
 }
 
-impl Index<u8> for BitArray {
-    type Output = bool;
-    #[inline]
-    #[must_use]
-    #[rustfmt::skip]
-    fn index(&self, index: u8) -> &Self::Output {
-        assert!(index < 64);
-        if self.get_unchecked(index) { &TRUE } else { &FALSE }
-    }
-}
-
 impl Index<usize> for BitArray {
     type Output = bool;
     #[inline]
@@ -145,7 +137,6 @@ impl Index<usize> for BitArray {
     #[rustfmt::skip]
     fn index(&self, index: usize) -> &Self::Output {
         assert!(index < 64);
-        #[allow(clippy::cast_possible_truncation)]
-        if self.get_unchecked(index as u8) { &TRUE } else { &FALSE }
+        if self.get_unchecked(index) { &TRUE } else { &FALSE }
     }
 }
