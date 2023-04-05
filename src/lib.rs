@@ -20,8 +20,6 @@ impl BitArray {
     pub const fn new() -> Self {
         Self(0)
     }
-    /// ## Panics
-    /// Panics if index >= 64.
     #[inline]
     #[must_use]
     pub const fn get(&self, index: usize) -> Option<bool> {
